@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<meta name="HandheldFriendly" content="true">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.0/chart.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<title>List of Students</title>
+<style>
+  body {
+    font-family: "Roboto", sans-serif;
+    background-color: #f4f4f4;
+  }
+
+  #heading {
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 0 10px #5a5a5a;
+  }
+
+  table {
+    width: 80%;
+    margin: 30px auto;
+    border-collapse: collapse;
+  }
+
+  th,
+  td {
+    padding: 10px;
+    text-align: center;
+  }
+
+  tr:nth-child(even) {
+    background-color: #e0e0e0;
+  }
+
+  .barCharts {
+    text-align: center;
+    margin: 50px 140px;
+    display: none; /* Initially hide the charts */
+  }
+
+  #Top {
+    background-color: #e0e0e0;
+    border: none;
+    color: black;
+    font-size: 16px;
+    cursor: pointer;
+    border-radius: 8px;
+    box-shadow: 0 5px #5a5a5a;
+    width: 200px;
+    height: 40px;
+  }
+
+  #charts {
+    background-color: #e0e0e0;
+    border: none;
+    color: black;
+    padding: 15px 25px;
+    text-align: center;
+    font-size: 16px;
+    cursor: pointer;
+    border-radius: 8px;
+    box-shadow: 0 5px #5a5a5a;
+    margin: 15px 200px;
+    width: 200px;
+    height: 40px;
+  }
+
+  #charts:hover {
+    background-color: #e0e0e0;
+    box-shadow: 0 5px #5a5a5a;
+  }
+
+  #charts:active {
+    background-color: #e0e0e0;
+    box-shadow: 0 3px #5a5a5a;
+    transform: translateY(2px);
+  }
+
+  .chartCanvas {
+    width: 300px;
+    height: 300px;
+    margin: 15px;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  }
+
+  .chart-container {
+    width: 60%;
+    height: 60%;
+    background-color: white;
+  }
+  
+  /* Align the form and its container to the left */
+  .formWrapper {
+    text-align: left; /* Align the contents to the left */
+    margin: 50px auto; /* Center the container horizontally */
+    width: 80%; /* Adjust the width as needed */
+  }
+
+  /* Adjust the form width if needed */
+  form {
+    width: 100%; /* Make the form fill the container */
+  }
+  
+</style>
+</head>
+
+<body>
+<table id="heading" border="0" cellpadding="0" cellspacing="0" align="center">
+  <tr>
+    <td>
+      <img src="https://upload.wikimedia.org/wikipedia/commons/3/35/Ves-logo.png" alt="VESIT" width="50" height="100"/>
+    </td>
+    <td>
+      <h2 align="center">VES Institute of Technology - LIBRARY</h2>
+      <h3 align="center">Library footfall report from 20-12-2023 to 17-01-2024</h3>
+    </td>
+  </tr>
+</table>
+
+<!-- Button to show charts -->
+<button id="charts" onclick="toggleCharts()">Charts</button>
+
+<!-- Div to contain the charts -->
+<div class="barCharts">
+  <canvas id="LibraryVisits" class="chartCanvas"></canvas>
+  <canvas id="ProperCheckout" class="chartCanvas"></canvas>
+  <div class="chart-container">
+    <canvas id="pieChart" width="600" height="600"></canvas>
+    <br>
+<input type="radio" id="absoluteRadio" name="attendanceType" value="absolute" checked>
+<label for="absoluteRadio">Absolute</label>
+<input type="radio" id="percentageRadio" name="attendanceType" value="percentage">
+<label for="percentageRadio">Percentage</label>
+<button onclick="toggleChart()">Submit</button>
+  </div>
+</div>
+
+<!-- Top academic user button -->
+<button id="Top" onclick="toggleForm()">Top Academic User</button>
+
+<!-- Div to contain the form -->
+<div class="formWrapper">
+  <form name="criteria" action="listall.php" method="GET" onsubmit="return validateForm()">
+    <label for="account">Number of Students:</label>  
+    <input type="text" id="account" name="Students" size="2" maxlength="2"><br><br>
+    <label for="savings">No of Visits</label> 
+    <input type="radio" id="savings" name="criteria" value="visits">
+    <label for="current">Time Spent</label> 
+    <input type="radio" id="current" name="criteria" value="Time_Spent"><br><br>
+    <input type="submit" value="List the students">
+  </form>
+</div>
+
+<table border="1" cellpadding="3" cellspacing="0" align="center" id="myTable">
+  <tr align="center" height="35px">
+    <td><strong>Sr. No.</strong></td>
+    <td><strong>Department</strong></td>
+    <td><strong>Library Visits</strong></td>
+    <td><strong>Individuals</strong></td>
+    <td><strong>PCO</strong></td>
+    <td><strong>PCOHC</strong></td>
+    <td><strong>Avg. Time</strong></td>
+    <td><strong>NCO</strong></td>
+    <td><strong>NCOHC</strong></td>
+  </tr>
+  <tr align="center">
+    <td>1</td>
+    <td>Inst-AR</td>
+    <td>78</td>
+    <td>30</td>
+    <td>39</td>
+    <td>18</td>
+    <td>1 hrs, 49 min</td>
+    <td>39</td>
+    <td>20</td>
+   </tr>
+      <tr align="center">
+        <td>2</td>
+        <td>ETCS</td>
+        <td>36</td>
+        <td>21</td>
+        <td>19</td>
+        <td>11</td>
+        <td>0 hrs, 47 min</td>
+        <td>17</td>
+        <td>15</td>
+      </tr>
+      <tr align="center">
+        <td>3</td>
+        <td>CMPN</td>
+        <td>167</td>
+        <td>81</td>
+        <td>85</td>
+        <td>55</td>
+        <td>1 hrs, 26 min</td>
+        <td>82</td>
+        <td>45</td>
+      </tr>
+      <tr align="center">
+        <td>4</td>
+        <td>INFT</td>
+        <td>95</td>
+        <td>59</td>
+        <td>58</td>
+        <td>38</td>
+        <td>0 hrs, 56 min</td>
+        <td>37</td>
+        <td>26</td>
+      </tr>
+      <tr align="center">
+        <td>5</td>
+        <td>EXTC</td>
+        <td>69</td>
+        <td>41</td>
+        <td>45</td>
+        <td>22</td>
+        <td>1 hrs, 16 min</td>
+        <td>24</td>
+        <td>21</td>
+      </tr>
+      <tr align="center">
+        <td>6</td>
+        <td>AI&DS</td>
+        <td>65</td>
+        <td>44</td>
+        <td>30</td>
+        <td>20</td>
+        <td>0 hrs, 55 min</td>
+        <td>35</td>
+        <td>28</td>
+      </tr>
+      <tr align="center">
+        <td>7</td>
+        <td>MCA</td>
+        <td>19</td>
+        <td>15</td>
+        <td>14</td>
+        <td>11</td>
+        <td>1 hrs, 5 min</td>
+        <td>5</td>
+        <td>5</td>
+      </tr>
+      <tr align="center">
+        <td>8</td>
+        <td>M.E.IT</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0 hrs, 0 min</td>
+        <td>0</td>
+        <td>0</td>
+      </tr>
+      <tr align="center">
+        <td>9</td>
+        <td>M.E.INST</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0 hrs, 0 min</td>
+        <td>0</td>
+        <td>0</td>
+      </tr>
+      <tr align="center">
+        <td>10</td>
+        <td>M.E.VLSI</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0 hrs, 0 min</td>
+        <td>0</td>
+        <td>0</td>
+      </tr>
+      <tr align="center" style="font-weight: bold" height="35px">
+        <td></td>
+        <td>Total</td>
+        <td>529</td>
+        <td>291</td>
+        <td>290</td>
+        <td>175</td>
+        <td>1 hrs, 15 min</td>
+        <td>239</td>
+        <td>160</td>
+      </tr>
+
+      <tr>
+        <td colspan="10">
+          <ul>
+            <li align="left">
+              Average time listed above is applicable for the students who have
+              properly checked out from the library.
+            </li>
+            <li align="left">Labels:</li>
+            <ol>
+              <li align="left"><b>PCO -</b> Proper Checkout</li>
+              <li align="left"><b>PCOHC -</b> Proper Checkout (head count)</li>
+              <li align="left"><b>NCO -</b> Pending checkout</li>
+              <li align="left"><b>NCOHC -</b> Pending checkout (head count)</li>
+            </ol>
+          </ul>
+        </td>
+      </tr>
+    </table>
+
+<script>
+function toggleCharts() {
+        var chartsDiv = document.querySelector(".barCharts");
+        if (
+          chartsDiv.style.display === "none" ||
+          chartsDiv.style.display === ""
+        ) {
+          chartsDiv.style.display = "block"; //show charts if hidden
+        } else {
+          chartsDiv.style.display = "none"; //hide charts if visible
+        }
+      }
+
+      var ctxLibraryVisits = document
+        .getElementById("LibraryVisits")
+        .getContext("2d");
+      var chartDataLibraryVisits = {
+        labels: [
+          "Inst-AR",
+          "ETCS",
+          "CMPN",
+          "INFT",
+          "EXTC",
+          "AI&DS",
+          "MCA",
+          "M.E.IT",
+          "M.E.INST",
+          "M.E.VLSI",
+        ],
+        datasets: [
+          {
+            label: "Library Visits",
+            data: [78, 36, 167, 95, 69, 65, 19, 0, 0, 0],
+            backgroundColor: [
+              "rgba(0, 0, 255, 0.5)",
+              "rgba(255, 0, 0, 0.5)",
+              "rgba(0, 255, 0, 0.5)",
+              "rgba(255, 255, 0, 0.5)",
+              "rgba(255, 165, 0, 0.5)",
+              "rgba(128, 0, 128, 0.5)",
+              "rgba(128, 128, 128, 0.5)",
+              "rgba(128, 0, 32, 0.5)",
+              "rgba(0, 128, 128, 0.5)",
+              "rgba(255, 0, 255, 0.5)",
+            ],
+            borderColor: [
+              "rgba(0, 0, 255, 1)",
+              "rgba(255, 0, 0, 1)",
+              "rgba(0, 255, 0, 1)",
+              "rgba(255, 255, 0, 1)",
+              "rgba(255, 165, 0, 1)",
+              "rgba(128, 0, 128, 1)",
+              "rgba(128, 128, 128, 1)",
+              "rgba(128, 0, 32, 1)",
+              "rgba(0, 128, 128, 1)",
+              "rgba(255, 0, 255, 1)",
+            ],
+            borderWidth: 1,
+            animation: {
+              duration: 1000,
+            },
+          },
+        ],
+      };
+      var myBarChartLibraryVisits = new Chart(ctxLibraryVisits, {
+        type: "bar",
+        data: chartDataLibraryVisits,
+        options: {
+          scales: {
+            y: {
+              beginAtZero: true,
+            },
+          },
+        },
+      });
+
+      var ctxBarChart = document
+        .getElementById("ProperCheckout")
+        .getContext("2d");
+      var chartDataBarChart = {
+        labels: [
+          "Inst-AR",
+          "ETCS",
+          "CMPN",
+          "INFT",
+          "EXTC",
+          "AI&DS",
+          "MCA",
+          "M.E.IT",
+          "M.E.INST",
+          "M.E.VLSI",
+        ],
+        datasets: [
+          {
+            label: "Proper Checkout",
+            data: [18, 11, 55, 38, 22, 20, 11, 0, 0, 0],
+            backgroundColor: [
+              "rgba(0, 0, 255, 0.5)",
+              "rgba(255, 0, 0, 0.5)",
+              "rgba(0, 255, 0, 0.5)",
+              "rgba(255, 255, 0, 0.5)",
+              "rgba(255, 165, 0, 0.5)",
+              "rgba(128, 0, 128, 0.5)",
+              "rgba(128, 128, 128, 0.5)",
+              "rgba(128, 0, 32, 0.5)",
+              "rgba(0, 128, 128, 0.5)",
+              "rgba(255, 0, 255, 0.5)",
+            ],
+            borderColor: [
+              "rgba(0, 0, 255, 1)",
+              "rgba(255, 0, 0, 1)",
+              "rgba(0, 255, 0, 1)",
+              "rgba(255, 255, 0, 1)",
+              "rgba(255, 165, 0, 1)",
+              "rgba(128, 0, 128, 1)",
+              "rgba(128, 128, 128, 1)",
+              "rgba(128, 0, 32, 1)",
+              "rgba(0, 128, 128, 1)",
+              "rgba(255, 0, 255, 1)",
+            ],
+            borderWidth: 1,
+            animation: {
+              duration: 1000,
+            },
+          },
+        ],
+      };
+      var myBarChart = new Chart(ctxBarChart, {
+        type: "bar",
+        data: chartDataBarChart,
+        options: {
+          scales: {
+            y: {
+              beginAtZero: true,
+            },
+          },
+        },
+      });
+
+   var originalData = [30, 21, 81, 59, 41, 44, 15, 0, 0, 0];
+    var newData = [60, 60, 180, 120, 120, 120, 60, 60, 60, 60];
+    var labels = [
+      "Inst-AR",
+      "ETCS",
+      "CMPN",
+      "INFT",
+      "EXTC",
+      "AI&DS",
+      "MCA",
+      "M.E.IT",
+      "M.E.INST",
+      "M.E.VLSI",
+    ];
+
+    var absoluteData = originalData.slice(); // Copy originalData
+    var percentageData = [];
+
+    for (var i = 0; i < originalData.length; i++) {
+        percentageData.push((originalData[i] / newData[i]) * 100).toFixed(2) + '%';
+    }
+
+    var chartData = absoluteData;
+
+    var ctx = document.getElementById('pieChart').getContext('2d');
+    var pieChart = new Chart(ctx, {
+        type: 'pie',
+        data: {
+            labels: labels,
+            datasets: [{
+                data: chartData,
+                backgroundColor: [
+                    "rgba(0, 0, 255, 0.5)",
+                    "rgba(255, 0, 0, 0.5)",
+                    "rgba(0, 255, 0, 0.5)",
+                    "rgba(255, 255, 0, 0.5)",
+                    "rgba(255, 165, 0, 0.5)",
+                    "rgba(128, 0, 128, 0.5)",
+                    "rgba(128, 128, 128, 0.5)",
+                    "rgba(128, 0, 32, 0.5)",
+                    "rgba(0, 128, 128, 0.5)",
+                    "rgba(255, 0, 255, 0.5)"
+                ]
+            }]
+        },
+        options: {
+            responsive: false,
+            legend: {
+                display: false
+            },
+            tooltips: {
+                callbacks: {
+                    label: function(tooltipItem, data) {
+                        var label = data.labels[tooltipItem.index] || '';
+                        if (label) {
+                            label += ': ';
+                        }
+                        label += data.datasets[tooltipItem.datasetIndex].data[tooltipItem.index];
+                        if (document.getElementById('percentageRadio').checked) {
+                            label += '%'; // Append "%" symbol for percentage data
+                        }
+                        return label;
+                    }
+                }
+            }
+        }
+    });
+
+    function toggleChart() {
+        var radioButtons = document.getElementsByName('attendanceType');
+        for (var i = 0; i < radioButtons.length; i++) {
+            if (radioButtons[i].checked && radioButtons[i].value === 'absolute') {
+                chartData = absoluteData;
+            } else if (radioButtons[i].checked && radioButtons[i].value === 'percentage') {
+                chartData = percentageData;
+            }
+        }
+
+        pieChart.data.datasets[0].data = chartData;
+        pieChart.update();
+    }
+
+  function toggleCharts() {
+    var chartsDiv = document.querySelector(".barCharts");
+    if (chartsDiv.style.display === "none" || chartsDiv.style.display === "") {
+      chartsDiv.style.display = "block"; // Show charts if hidden
+    } else {
+      chartsDiv.style.display = "none"; // Hide charts if visible
+    }
+  }
+
+  // Chart generation scripts go here
+
+  function validateForm() {
+    var inputField = document.getElementById('account').value;
+    var regex = /^[0-9]+$/; // Regular expression to match only numbers
+    
+    if (!regex.test(inputField)) {
+      alert('Please enter only numbers for Number of Students.');
+      return false; // Prevent form submission
+    }
+    
+    return true; // Allow form submission
+  }
+  
+  function toggleForm() {
+    var formWrapper = document.querySelector(".formWrapper");
+    if (
+      formWrapper.style.display === "none" ||
+      formWrapper.style.display === ""
+    ) {
+      formWrapper.style.display = "block"; //show form if hidden
+    } else {
+      formWrapper.style.display = "none"; //hide form if visible
+    }
+  }
+
+</script>
+</body>
+</html>
